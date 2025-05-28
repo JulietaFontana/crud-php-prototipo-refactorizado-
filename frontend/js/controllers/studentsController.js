@@ -147,6 +147,7 @@ async function confirmDelete(id)
     catch (err) 
     {
         console.error('Error al borrar:', err.message);
+        alert('Error al borrar el estudiante. Por favor, inténtalo de nuevo.');
     }
 }
   
