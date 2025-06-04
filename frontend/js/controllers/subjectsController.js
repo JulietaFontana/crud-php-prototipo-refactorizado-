@@ -37,8 +37,25 @@ function setupSubjectFormHandler()
             }
             else
             {
-                await subjectsAPI.create(subject);
-            }
+                const response = await fetch(subjectsAPI.url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(subject),
+                });
+
+                const errorBox = document.getElementById('subject-error');
+
+                if (response.ok) {
+                    form.reset();
+                    document.getElementById('subjectId').value = '';
+                    errorBox.textContent = '';
+                    loadSubjects();
+                } else {
+                    const data = await response.json();
+                    errorBox.textContent = data.error || 'Ocurrió un error al crear la materia';
+                }
+
+                        }
             
             form.reset();
             document.getElementById('subjectId').value = '';
@@ -47,6 +64,7 @@ function setupSubjectFormHandler()
         catch (err)
         {
             console.error(err.message);
+            alert(errorText);
         }
   });
 }

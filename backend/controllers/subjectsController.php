@@ -11,6 +11,22 @@
 
 require_once("./models/subjects.php");
 
+
+public function create($data)
+{
+    $existing = $this->model->findByName($data['name']);
+
+    if ($existing) {
+        http_response_code(400);
+        header('Content-Type: application/json');
+        echo json_encode(["error" => "Ya existe una materia con ese nombre"]);
+        return;
+    }
+
+    $this->model->create($data['name']);
+    echo json_encode(["message" => "Materia creada correctamente"]);
+}
+
 function handleGet($conn) 
 {
     $input = json_decode(file_get_contents("php://input"), true);

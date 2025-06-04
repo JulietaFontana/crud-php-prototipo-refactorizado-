@@ -29,7 +29,7 @@ function handleGet($conn)
 
 function handlePost($conn) 
 {
-    $input = json_decode(file_get_contents("php://input"), true);
+    $input = json_decode(file_get_contents("php://input"), associative: true);
 
     $result = createStudent($conn, $input['fullname'], $input['email'], $input['age']);
     if ($result['inserted'] > 0) 
