@@ -53,6 +53,19 @@ function updateSubject($conn, $id, $name)
 
 function deleteSubject($conn, $id) 
 {
+    // Validar si la materia está relacionada con algún estudiante
+    $stmt = $conn->prepare("SELECT * FROM students_subjects WHERE subject_id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $related = $stmt->get_result()->fetch_assoc();
+
+    if ($related) {
+        http_response_code(400);
+        echo json_encode(["error" => "No se puede eliminar la materia porque está asignada a estudiantes."]);
+        return;
+    }
+
+    // Si no hay relaciones, se puede eliminar
     $sql = "DELETE FROM subjects WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
@@ -60,4 +73,5 @@ function deleteSubject($conn, $id)
 
     return ['deleted' => $stmt->affected_rows];
 }
+
 ?>

@@ -137,17 +137,24 @@ function createSubjectActionsCell(subject)
     return td;
 }
 
-async function confirmDeleteSubject(id)
-{
+async function confirmDeleteSubject(id) {
     if (!confirm('¿Seguro que deseas borrar esta materia?')) return;
 
-    try
-    {
-        await subjectsAPI.remove(id);
-        loadSubjects();
-    }
-    catch (err)
-    {
+    try {
+        const response = await fetch(`${subjectsAPI.url}/${id}`, {
+            method: 'DELETE',
+        });
+
+        const errorBox = document.getElementById('subject-error');
+
+        if (response.ok) {
+            errorBox.textContent = '';
+            loadSubjects();
+        } else {
+            const data = await response.json();
+            errorBox.textContent = data.error || 'No se pudo eliminar la materia';
+        }
+    } catch (err) {
         console.error('Error al borrar materia:', err.message);
     }
 }

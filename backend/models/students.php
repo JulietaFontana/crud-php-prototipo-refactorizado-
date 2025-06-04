@@ -57,6 +57,16 @@ function updateStudent($conn, $id, $fullname, $email, $age)
 
 function deleteStudent($conn, $id) 
 {
+    $stmt = $conn->prepare("SELECT * FROM students_subjects WHERE student_id = ?");
+    $stmt->execute([$input['id']]);
+    $related = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($related) {
+        http_response_code(400);
+        echo json_encode(["error" => "No se puede eliminar el estudiante porque tiene materias asignadas."]);
+        return;
+    }
+
     $sql = "DELETE FROM students WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
