@@ -75,4 +75,12 @@ function removeStudentSubject($conn, $id)
 
     return ['deleted' => $stmt->affected_rows];
 }
+
+public function find($studentId, $subjectId)
+{
+    $stmt = $this->db->prepare("SELECT * FROM students_subjects WHERE student_id = ? AND subject_id = ?");
+    $stmt->execute([$studentId, $subjectId]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
 ?>

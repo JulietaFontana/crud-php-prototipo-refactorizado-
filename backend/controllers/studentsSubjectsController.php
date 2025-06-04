@@ -20,7 +20,18 @@ function handleGet($conn)
 function handlePost($conn) 
 {
     $input = json_decode(file_get_contents("php://input"), true);
-    
+
+    // Validación de duplicado
+    $stmt = $conn->prepare("SELECT * FROM students_subjects WHERE student_id = ? AND subject_id = ?");
+    $stmt->execute([$input['student_id'], $input['subject_id']]);
+    $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($existing) {
+        http_response_code(400);
+        echo json_encode(["error" => "Ya existe esta relación entre estudiante y materia"]);
+        return;
+    }
+
     $result = assignSubjectToStudent($conn, $input['student_id'], $input['subject_id'], $input['approved']);
     if ($result['inserted'] > 0) 
     {
@@ -32,6 +43,7 @@ function handlePost($conn)
         echo json_encode(["error" => "Error al asignar"]);
     }
 }
+
 
 function handlePut($conn) 
 {

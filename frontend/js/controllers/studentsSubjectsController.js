@@ -69,7 +69,21 @@ function setupFormHandler()
             } 
             else 
             {
-                await studentsSubjectsAPI.create(relation);
+                const response = await fetch(studentSubjectsAPI.url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(relation),
+                });
+
+                if (response.ok) {
+                    form.reset();
+                    document.getElementById('relation-error').textContent = '';
+                    loadStudentSubjects();
+                } else {
+                    const data = await response.json();
+                    document.getElementById('relation-error').textContent = data.error || 'Error al guardar la relación';
+                }
+
             }
             clearForm();
             loadRelations();
